@@ -1,0 +1,10 @@
+{
+"name":"t",//模组名字
+"displayName":"t",//模组名字
+"author":"sr",//模组作者
+"description":"",//模组介绍
+"version":"1",//模组版本
+"minGameVersion":"149",//模组适配游戏版本
+"main":"sc.SCMain",
+"java":true,
+}
