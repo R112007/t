@@ -35,6 +35,7 @@ public class Crystal extends Mod {
   @Override
   public void loadContent() {
     Log.info("Start to Load Contents");
+    Test.load();
     TimeControl.load();
     Log.info("hava loaded all");
   }
