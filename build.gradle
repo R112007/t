@@ -9,7 +9,8 @@ sourceSets.main.java.srcDirs = ["src"]
 
 repositories {
     mavenCentral()
-//    maven { url "https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository" }
+    maven { url "https://maven.aliyun.com/repository/centerl"}
+    maven { url "https://maven.aliyun.com/repository/public"}
     maven{ url "https://raw.kkgithub.com/Zelaux/MindustryRepo/master/repository" }
     maven { url "https://maven.xpdustry.com/mindustry" }
     maven { url 'https://www.jitpack.io' }
@@ -36,11 +37,10 @@ allprojects {
 
 dependencies {
     //implementation 'org.jetbrains:annotations:24.0.0'
-
     compileOnly "com.github.Anuken.Arc:arc-core:$arcVersion"
     compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
     annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
-
+//    implementation "de.cronn:reflection-util:3.2.0"
 
 }
 

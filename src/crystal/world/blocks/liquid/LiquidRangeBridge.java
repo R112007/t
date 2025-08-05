@@ -24,7 +24,6 @@ public class LiquidRangeBridge extends LiquidBridge {
 
   @Override
   public void drawPlace(int x, int y, int rotation, boolean valid) {
-    super.drawPlace(x, y, rotation, valid);
     Drawf.dashCircle(x * Vars.tilesize, y * Vars.tilesize, range * Vars.tilesize, Pal.accent);
   }
 
@@ -95,10 +94,11 @@ public class LiquidRangeBridge extends LiquidBridge {
         return false;
       return this.liquids.currentAmount() < block.liquidCapacity;
     }
-
-    @Override
-    public boolean checkDump(Building to) {
-      return true;
-    }
+    /*
+     * @Override
+     * public boolean checkDump(Building to) {
+     * return true;
+     * }
+     */
   }
 }

@@ -31,6 +31,7 @@ public class UnitInfoFileStorage {
   public static void loadAll() {
     if (!saveFile.exists()) {
       Log.info("UnitInfo 存储文件不存在，初始化空数组");
+      UnitInfo.lastId = 0;
       System.arraycopy(new UnitInfo[3000], 0, UnitInfo.all, 0, 3000);
       return;
     }
@@ -39,6 +40,7 @@ public class UnitInfoFileStorage {
       UnitInfo[] restored = json.fromJson(UnitInfo[].class, jsonData);
       if (restored.length != UnitInfo.all.length) {
         Log.warn("恢复的数组长度不匹配，使用空数组");
+        UnitInfo.lastId = 0;
         System.arraycopy(new UnitInfo[3000], 0, UnitInfo.all, 0, 3000);
       } else {
         System.arraycopy(restored, 0, UnitInfo.all, 0, 3000);
@@ -46,6 +48,7 @@ public class UnitInfoFileStorage {
       }
     } catch (Exception e) {
       Log.err("UnitInfo.all 恢复失败，使用空数组", e);
+      UnitInfo.lastId = 0;
       System.arraycopy(new UnitInfo[3000], 0, UnitInfo.all, 0, 3000);
     }
   }

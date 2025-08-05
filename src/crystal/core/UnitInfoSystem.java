@@ -28,7 +28,8 @@ public class UnitInfoSystem {
     });
     save();
     Events.on(SectorLoseEvent.class, e -> {
-      UnitInfo.get(e.sector).clear();
+      if (UnitInfo.get(e.sector) != null)
+        UnitInfo.get(e.sector).clear();
     });
     Events.on(GameOverEvent.class, e -> {
       Log.info("GameOver监听器运行");

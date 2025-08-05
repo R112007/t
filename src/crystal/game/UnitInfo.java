@@ -1,12 +1,10 @@
 package crystal.game;
 
 import arc.Core;
-import arc.Events;
-import arc.files.Fi;
 import arc.math.WindowedMean;
+import arc.scene.ui.layout.Table;
 import arc.struct.ObjectMap;
 import arc.util.Log;
-import arc.util.serialization.Json;
 import crystal.type.UnitStack;
 import mindustry.Vars;
 import mindustry.type.Planet;
@@ -17,13 +15,15 @@ public class UnitInfo {
 
   private static final int valueWindow = 60;
   // public final Sector sector;
-  public final String planetName;
-  public final int id;
-  public final int sectorId;
+  public String planetName;
+  public int id;
+  public int sectorId;
   public static final UnitInfo[] all = new UnitInfo[3000];
+  public ObjectMap<UnitType, ExportStat> possessed = new ObjectMap<>();
   public ObjectMap<UnitType, ExportStat> export = new ObjectMap<>();
   public ObjectMap<UnitType, ExportStat> imports = new ObjectMap<>();
   public static int lastId = loadLastId();
+  public final transient Table table = new Table();
 
   public UnitInfo(Sector sector) {
     this.planetName = sector.planet.name;
@@ -34,10 +34,21 @@ public class UnitInfo {
     saveLastId();
   }
 
+  public UnitInfo(String planetName, int sectorId, int id) {
+    this.planetName = planetName;
+    this.sectorId = sectorId;
+    this.id = id;
+  }
+
   public UnitInfo() {
-    this.sectorId = -1;
-    this.planetName = "null";
-    this.id = -1;
+  }
+
+  public void handUnitsPossessed(UnitStack stack) {
+    handUnitsPossessed(stack.unit, stack.amount);
+  }
+
+  public void handUnitsPossessed(UnitType unit, int amount) {
+    possessed.get(unit, ExportStat::new).counter += amount;
   }
 
   public void handUnitsExport(UnitStack stack) {
@@ -115,6 +126,7 @@ public class UnitInfo {
     public transient boolean loaded;
 
     public float mean;
+    public int amount;
 
     public String toString() {
       return mean + "";

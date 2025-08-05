@@ -16,6 +16,7 @@ public class UnitInfoSerializer implements Json.Serializer<UnitInfo> {
     json.writeField(object, "id", "id");
     json.writeField(object, "planetName", "planetName");
     json.writeField(object, "sectorId", "sectorId");
+    json.writeValue("possessed", serializeExportMap(object.possessed));
     json.writeValue("export", serializeExportMap(object.export));
     json.writeValue("imports", serializeExportMap(object.imports));
     json.writeObjectEnd();
@@ -32,15 +33,13 @@ public class UnitInfoSerializer implements Json.Serializer<UnitInfo> {
       planetName = jsonData.getString("planetName");
       sectorId = jsonData.getInt("sectorId");
       id = jsonData.getInt("id");
-      unitInfo = (UnitInfo) UnitInfo.class.getDeclaredConstructor().newInstance();
-      setFinalField(UnitInfo.class, unitInfo, "planetName", planetName);
-      setFinalField(UnitInfo.class, unitInfo, "sectorId", sectorId);
-      setFinalField(UnitInfo.class, unitInfo, "id", id);
+      unitInfo = new UnitInfo(planetName, sectorId, id);
+      unitInfo.possessed = deserializeExportMap(json, jsonData.get("possessed"));
       unitInfo.export = deserializeExportMap(json, jsonData.get("export"));
       unitInfo.imports = deserializeExportMap(json, jsonData.get("imports"));
     } catch (Exception e) {
       unitInfo = null;
-      Log.err("创建实例失败" + e);
+      Log.err("创建实例失败" + e + "分割线" + e.getMessage());
     }
     return unitInfo;
   }
