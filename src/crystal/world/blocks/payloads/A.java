@@ -1,35 +1,33 @@
 package crystal.world.blocks.payloads;
 
-import arc.scene.ui.layout.Table;
+import arc.util.Log;
 import crystal.game.UnitInfo;
-import crystal.game.UnitInfo.ExportStat;
+import crystal.game.WaitTime;
+import mindustry.content.Fx;
 import mindustry.content.SectorPresets;
 import mindustry.gen.Building;
-import mindustry.gen.Icon;
 import mindustry.type.UnitType;
-import mindustry.ui.Styles;
 import mindustry.world.Block;
 
 public class A extends Block {
-  public static UnitType u;
-  public static ExportStat e;
+  public UnitType u;
 
   public A(String name) {
     super(name);
-    e = new ExportStat();
+    update = true;
+    solid = true;
+    configurable = true;
   }
 
   public class ABuild extends Building {
-    int i = 0;
-
     @Override
-    public void buildConfiguration(Table table) {
-      table.button(Icon.upOpen, Styles.clearNoneTogglei, () -> {
-        i++;
-        e.amount = i;
-        UnitInfo.get(SectorPresets.groundZero.sector).possessed.put(u, e);
-        UnitInfo.get(SectorPresets.groundZero.sector).possessed.put(u, e);
-      });
+    public void updateTile() {
+      if (WaitTime.waittime(240f)) {
+        Fx.shieldWave.at(x, y);
+        Log.info("设备" + name + "发送单位" + u.name);
+        UnitInfo.get(SectorPresets.groundZero.sector).handUnitsPossessed(u, 1);
+        Log.info("发送" + u.name + "完毕");
+      }
     }
   }
 }

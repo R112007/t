@@ -1,13 +1,8 @@
 package crystal.game;
 
-import java.util.Arrays;
-
 import arc.files.Fi;
-import arc.struct.Seq;
 import arc.util.Log;
 import arc.util.serialization.Json;
-import arc.util.serialization.JsonValue;
-import arc.util.serialization.JsonWriter;
 import mindustry.Vars;
 
 public class UnitInfoFileStorage {

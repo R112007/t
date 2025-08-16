@@ -4,10 +4,12 @@ import arc.util.Log;
 import arc.util.serialization.Json;
 import arc.util.serialization.JsonValue;
 import crystal.game.UnitInfo.ExportStat;
+import crystal.type.UnitStack;
 import mindustry.Vars;
 import mindustry.ctype.ContentType;
 import mindustry.type.UnitType;
 import arc.struct.ObjectMap;
+import arc.struct.Seq;
 
 public class UnitInfoSerializer implements Json.Serializer<UnitInfo> {
   @Override
@@ -16,7 +18,7 @@ public class UnitInfoSerializer implements Json.Serializer<UnitInfo> {
     json.writeField(object, "id", "id");
     json.writeField(object, "planetName", "planetName");
     json.writeField(object, "sectorId", "sectorId");
-    json.writeValue("possessed", serializeExportMap(object.possessed));
+    json.writeValue("possessed", serializeUnitStack(object.possessed));
     json.writeValue("export", serializeExportMap(object.export));
     json.writeValue("imports", serializeExportMap(object.imports));
     json.writeObjectEnd();
@@ -34,23 +36,38 @@ public class UnitInfoSerializer implements Json.Serializer<UnitInfo> {
       sectorId = jsonData.getInt("sectorId");
       id = jsonData.getInt("id");
       unitInfo = new UnitInfo(planetName, sectorId, id);
-      unitInfo.possessed = deserializeExportMap(json, jsonData.get("possessed"));
+      unitInfo.possessed = deserializeUnitStack(json, jsonData.get("possessed"));
       unitInfo.export = deserializeExportMap(json, jsonData.get("export"));
       unitInfo.imports = deserializeExportMap(json, jsonData.get("imports"));
     } catch (Exception e) {
       unitInfo = null;
-      Log.err("创建实例失败" + e + "分割线" + e.getMessage());
+      // Log.err("创建实例失败" + e + "分割线" + e.getMessage());
     }
     return unitInfo;
   }
 
-  private void setFinalField(Class<?> clazz, Object obj, String fieldName, Object value) throws Exception {
-    java.lang.reflect.Field field = clazz.getDeclaredField(fieldName);
-    field.setAccessible(true);
-    java.lang.reflect.Field modifiersField = java.lang.reflect.Field.class.getDeclaredField("modifiers");
-    modifiersField.setAccessible(true);
-    modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
-    field.set(obj, value);
+  private Seq<StringIntStack> serializeUnitStack(Seq<UnitStack> stacks) {
+    Seq<StringIntStack> serialized = new Seq<>();
+    for (var stack : stacks) {
+      serialized.add(new StringIntStack(stack.unit.name, stack.amount));
+    }
+    return serialized;
+  }
+
+  private Seq<UnitStack> deserializeUnitStack(Json json, JsonValue jsonValue) {
+    Seq<UnitStack> deserialize = new Seq<>();
+    if (jsonValue == null || !jsonValue.isObject())
+      return deserialize;
+    for (JsonValue child = jsonValue.child; child != null; child = child.next) {
+      UnitType unitType = Vars.content.getByName(ContentType.unit, child.name);
+      if (unitType == null) {
+        Log.warn("跳过未知的UnitType: " + child.name);
+        continue;
+      }
+      int amount = child.asInt();
+      deserialize.add(new UnitStack(unitType, amount));
+    }
+    return deserialize;
   }
 
   private ObjectMap<String, Float> serializeExportMap(ObjectMap<UnitType, ExportStat> map) {
@@ -78,5 +95,15 @@ public class UnitInfoSerializer implements Json.Serializer<UnitInfo> {
       map.put(unitType, stat);
     }
     return map;
+  }
+
+  public class StringIntStack {
+    public String name;
+    public int amount;
+
+    public StringIntStack(String name, int amount) {
+      this.name = name;
+      this.amount = amount;
+    }
   }
 }

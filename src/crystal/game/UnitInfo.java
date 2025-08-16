@@ -2,8 +2,8 @@ package crystal.game;
 
 import arc.Core;
 import arc.math.WindowedMean;
-import arc.scene.ui.layout.Table;
 import arc.struct.ObjectMap;
+import arc.struct.Seq;
 import arc.util.Log;
 import crystal.type.UnitStack;
 import mindustry.Vars;
@@ -14,16 +14,14 @@ import mindustry.type.UnitType;
 public class UnitInfo {
 
   private static final int valueWindow = 60;
-  // public final Sector sector;
   public String planetName;
   public int id;
   public int sectorId;
   public static final UnitInfo[] all = new UnitInfo[3000];
-  public ObjectMap<UnitType, ExportStat> possessed = new ObjectMap<>();
+  public Seq<UnitStack> possessed = new Seq<>();
   public ObjectMap<UnitType, ExportStat> export = new ObjectMap<>();
   public ObjectMap<UnitType, ExportStat> imports = new ObjectMap<>();
   public static int lastId = loadLastId();
-  public final transient Table table = new Table();
 
   public UnitInfo(Sector sector) {
     this.planetName = sector.planet.name;
@@ -43,12 +41,48 @@ public class UnitInfo {
   public UnitInfo() {
   }
 
+  public void handUnitsPossessed(UnitStack[] stacks) {
+    for (var stack : stacks) {
+      handUnitsExport(stack);
+    }
+  }
+
   public void handUnitsPossessed(UnitStack stack) {
     handUnitsPossessed(stack.unit, stack.amount);
   }
 
+  public UnitStack getPossessedUnitStack(UnitType unit) {
+    UnitStack tmp = null;
+    for (var stack : possessed) {
+      if (stack.unit == unit)
+        tmp = stack;
+    }
+    return tmp;
+  }
+
   public void handUnitsPossessed(UnitType unit, int amount) {
-    possessed.get(unit, ExportStat::new).counter += amount;
+    if (hasUnitType(unit)) {
+      for (var stack : possessed) {
+        if (stack.unit == unit)
+          stack.amount += amount;
+      }
+    } else {
+      possessed.add(new UnitStack(unit, amount));
+    }
+    // for (var stack : possessed) {
+    // Log.info("种类" + stack.unit.name + " " + "数量" + stack.amount);
+    // }
+  }
+
+  public boolean hasUnitType(UnitType unit) {
+    // Log.info("传入单位" + unit.name);
+    for (var stack : possessed) {
+      if (stack.unit.name.equals(unit.name)) {
+        // Log.info("配对成功的单位" + stack.unit.name);
+        return true;
+      }
+    }
+    return false;
   }
 
   public void handUnitsExport(UnitStack stack) {

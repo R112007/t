@@ -254,22 +254,24 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
         var info = UnitInfo.get(sector);
         dialog.cont.pane(c -> {
             c.defaults().padBottom(5);
-            c.add("unitinfo.possessed").left().row();
+            c.add(Core.bundle.get("unitinfo.possessed")).left().row();
             c.table(t -> {
                 int i;
                 if (!info.possessed.isEmpty()) {
                     i = 0;
-                    for (ObjectMap.Entry<UnitType, UnitInfo.ExportStat> entry : info.possessed.entries()) {
-                        t.add(StatValues.stack(entry.key, entry.value.amount));
+                    info.possessed.sort();
+                    for (var stack : info.possessed) {
+                        if(stack.amount!=0){
+                        t.add(StatValues.stack(stack.unit, stack.amount));
                         i++;
                         if (i % 4 == 0) {
                             t.row();
-                        }
+                        }}
                     }
                 }
             });
             c.row();
-            c.add("unitinfo.import").left().row();
+            c.add(Core.bundle.get("unitinfo.import")).left().row();
             c.table(t -> {
                 int i;
                 if (!info.imports.isEmpty()) {
@@ -284,7 +286,7 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
                 }
             });
             c.row();
-            c.add("unitinfo.export").left().row();
+            c.add(Core.bundle.get("unitinfo.export")).left().row();
             c.table(t -> {
                 int i;
                 if (!info.export.isEmpty()) {
