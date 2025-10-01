@@ -1,23 +1,36 @@
 package crystal;
 
+import crystal.entities.abilities.AddWeaponAbility;
+import crystal.world.blocks.crystal.CrystalDrill;
+import crystal.world.blocks.crystal.CrystalSource;
+import crystal.world.blocks.defence.LinkWall;
+import crystal.world.blocks.environment.DamageFloor;
 import crystal.world.blocks.liquid.LiquidRangeBridge;
 import crystal.world.blocks.payloads.A;
 import crystal.world.blocks.payloads.UnitLanuchPad;
 import crystal.world.blocks.payloads.UnitReceivePad;
 import mindustry.content.Items;
 import mindustry.content.UnitTypes;
+import mindustry.gen.UnitEntity;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
+import mindustry.type.UnitType;
 import mindustry.world.Block;
 import mindustry.world.meta.BuildVisibility;
 
 public class Test {
   public static Block t;
+  public static Block t1;
+  public static Block t2;
   public static Block a1;
   public static Block a2;
   public static Block a3;
   public static Block a4;
   public static Block a5;
+  public static Block c1;
+  public static Block d1;
+  public static Block f1;
+  public static UnitType a6;
 
   public static void load() {
     t = new LiquidRangeBridge("t") {
@@ -76,6 +89,51 @@ public class Test {
         size = 3;
         this.requirements(Category.units, ItemStack.with(new Object[] { Items.copper, 1 }));
         this.alwaysUnlocked = true;
+      }
+    };
+    a6 = new UnitType("a6") {
+      {
+        speed = 0.5f;
+        hitSize = 8f;
+        health = 150;
+        constructor = UnitEntity::create;
+        this.abilities.add(new AddWeaponAbility(UnitTypes.dagger.weapons.get(0), 300, 80, 500, false));
+      }
+    };
+    t1 = new LinkWall("t1") {
+      {
+        size = 1;
+        this.requirements(Category.units, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    t2 = new LinkWall("t2") {
+      {
+        size = 2;
+        this.requirements(Category.units, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    c1 = new CrystalSource("c1") {
+      {
+        size = 1;
+        this.requirements(Category.production, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    d1 = new CrystalDrill("d1") {
+      {
+        this.consumeCrystal = 1f;
+        this.crystalCapacity = 60f;
+        size = 2;
+        this.requirements(Category.production, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    f1 = new DamageFloor("f1") {
+      {
+        albedo = 0.9f;
+        damage = 0.2f;
       }
     };
   }

@@ -8,8 +8,8 @@ import arc.util.Log;
 import crystal.content.CPlanets;
 import crystal.core.UnitInfoSystem;
 import crystal.game.UnitInfo;
-import crystal.game.UnitInfoFileStorage;
 import crystal.ui.TimeControl;
+import crystal.world.blocks.environment.DamageFloor;
 import mindustry.Vars;
 import mindustry.ctype.ContentType;
 import mindustry.game.EventType.ClientLoadEvent;
@@ -43,14 +43,24 @@ public class Crystal extends Mod {
   }
 
   public void constructor() {
-    UnitInfoFileStorage.loadAll();
+    /*
+     * UnitInfo.loadArray();
+     * try {
+     * for (var u : UnitInfo.all) {
+     * if (u != null)
+     * Log.info("id+" + u.id + "  sector " + u.getBoundSector());
+     * }
+     * } catch (Exception e) {
+     * Log.err("loadarray出错", e);
+     * }
+     */
+    // UnitInfoFileStorage.loadAll();
     loadlog();
     UnitInfoSystem.loadUnitInfo();
     showwelcome();
     Log.info("运行checkallsector");
     UnitInfoSystem.checkAllSector();
     UnitInfoSystem.saveUnitInfo();
-    UnitInfoFileStorage.saveAll();
     Log.info("运行checkallsector结束");
   }
 
@@ -58,11 +68,6 @@ public class Crystal extends Mod {
     for (var preset : UnitInfo.all) {
       if (preset != null)
         sectors.add(preset.getBoundSector());
-    }
-    Log.info("开始遍历sectors");
-    for (var u : UnitInfo.all) {
-      if (u != null)
-        Log.info("id+" + u.id + "  sector " + u.getBoundSector());
     }
     Log.info("");
     for (var u : sectors) {
@@ -83,15 +88,25 @@ public class Crystal extends Mod {
   public void update() {
     timer++;
     UnitInfoSystem.update();
+    DamageFloor.update();
   }
 
   public void replaceUI() {
     Events.on(ClientLoadEvent.class, (e) -> {
       Events.run(Trigger.update, () -> {
-        if (Vars.ui.planet.isShown()) {
-          Vars.ui.planet.hide();
-          if (!CVars.cui.cplanet.isShown()) {
-            CVars.cui.cplanet.show();
+        if (Vars.ui.planet.isShown() || CVars.cui.cplanet.isShown()) {
+          if (Vars.ui.planet.state.planet == CPlanets.lx || CVars.cui.cplanet.state.planet == CPlanets.lx) {
+            if (Vars.ui.planet.isShown()) {
+              Vars.ui.planet.hide();
+              if (!CVars.cui.cplanet.isShown())
+                CVars.cui.cplanet.show();
+            }
+          } else {
+            if (CVars.cui.cplanet.isShown()) {
+              CVars.cui.cplanet.hide();
+              if (!Vars.ui.planet.isShown())
+                Vars.ui.planet.show();
+            }
           }
         }
         if (Vars.ui.research.isShown()) {

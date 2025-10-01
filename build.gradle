@@ -22,7 +22,7 @@ java {
 }
 
 ext {
-    arcVersion = "v150.1"
+    arcVersion = "v152"
     mindustryVersion = arcVersion
     jabelVersion = "93fde537c7"
     isWindows = System.getProperty("os.name").toLowerCase().contains("windows")
