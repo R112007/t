@@ -1,6 +1,8 @@
 package crystal;
 
+import arc.graphics.Color;
 import crystal.entities.abilities.AddWeaponAbility;
+import crystal.entities.bullet.GravityBullet;
 import crystal.world.blocks.crystal.CrystalDrill;
 import crystal.world.blocks.crystal.CrystalSource;
 import crystal.world.blocks.defence.LinkWall;
@@ -9,13 +11,16 @@ import crystal.world.blocks.liquid.LiquidRangeBridge;
 import crystal.world.blocks.payloads.A;
 import crystal.world.blocks.payloads.UnitLanuchPad;
 import crystal.world.blocks.payloads.UnitReceivePad;
+import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.UnitTypes;
+import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.UnitType;
 import mindustry.world.Block;
+import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.meta.BuildVisibility;
 
 public class Test {
@@ -30,6 +35,7 @@ public class Test {
   public static Block c1;
   public static Block d1;
   public static Block f1;
+  public static Block tu1;
   public static UnitType a6;
 
   public static void load() {
@@ -132,8 +138,40 @@ public class Test {
     };
     f1 = new DamageFloor("f1") {
       {
+        id = 0;
         albedo = 0.9f;
         damage = 0.2f;
+      }
+    };
+    tu1 = new PowerTurret("tu1") {
+      {
+        requirements(Category.turret, ItemStack.with(Items.copper, 60));
+        range = 165f;
+
+        shoot.firstShotDelay = 40f;
+
+        recoil = 2f;
+        reload = 70f;
+        shake = 2f;
+        shootEffect = Fx.lancerLaserShoot;
+        smokeEffect = Fx.none;
+        heatColor = Color.red;
+        size = 2;
+        scaledHealth = 280;
+        moveWhileCharging = false;
+        accurateDelay = false;
+        shootSound = Sounds.laser;
+        coolant = consumeCoolant(0.2f);
+
+        consumePower(6f);
+        shootType = new GravityBullet(3, 5) {
+          {
+            pierce = true;
+            foeceRange = 300;
+            foece = 5;
+            lifetime = 600;
+          }
+        };
       }
     };
   }

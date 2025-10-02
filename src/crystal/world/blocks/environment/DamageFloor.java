@@ -1,5 +1,7 @@
 package crystal.world.blocks.environment;
 
+import arc.Core;
+import arc.Events;
 import arc.struct.Seq;
 import arc.util.Log;
 import mindustry.gen.Building;
@@ -9,6 +11,7 @@ import mindustry.world.blocks.environment.Floor;
 
 public class DamageFloor extends Floor {
   public float damage;
+  public int id = 0;
 
   public DamageFloor(String name) {
     super(name);
@@ -21,12 +24,21 @@ public class DamageFloor extends Floor {
       for (var f : tempTiles) {
         if (f.floor() instanceof DamageFloor) {
           DamageFloor d = (DamageFloor) f.floor();
+          Events.fire(new FloorId(d.id));
           f.build.damage(d.damage);
           // f.build.health -= (d.damage);
           Log.info("块" + f.build);
           Log.info("似没似" + f.build.dead);
         }
       }
+    }
+  }
+
+  public static class FloorId {
+    public int id;
+
+    public FloorId(int id) {
+      this.id = id;
     }
   }
 }
