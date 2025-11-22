@@ -6,6 +6,7 @@ import arc.struct.ObjectMap;
 import arc.struct.ObjectSet;
 import arc.struct.Seq;
 import arc.util.Log;
+import crystal.CVars;
 import crystal.type.UnitStack;
 import mindustry.Vars;
 import mindustry.type.Planet;
@@ -110,7 +111,8 @@ public class UnitInfo {
   public void clear() {
     imports.clear();
     export.clear();
-    Log.info(getBoundSector() + "丢失，清空单位储存库 " + "import " + imports + " export " + export);
+    if (CVars.debug)
+      Log.info(getBoundSector() + "丢失，清空单位储存库 " + "import " + imports + " export " + export);
     saveInfo();
   }
 

@@ -1,0 +1,8 @@
+
+      boolean isActive = !broken && realRadius() > 0.001f;
+      if (isActive && !activeShields.contains(this)) {
+        activeShields.add(this);
+      } else if (!isActive && activeShields.contains(this)) {
+        activeShields.remove(this);
+      }
+  public static final Seq<AbsorbForceProjectorBuild> activeShields = new Seq<>();

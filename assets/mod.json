@@ -1,9 +1,9 @@
 {
     "name":"crystal"
     "displayName": "Crystal",
-    "description": "晶业的儿子",
+    "description": "",
     "version": "v0.1",
-    "minGameVersion": "150",
+    "minGameVersion": "152.2",
     "author": "R(代码)，花开、小惜(贴图)",
     "java": true,
     "main": "crystal.Crystal"

@@ -74,4 +74,10 @@ public class GravityBullet extends BasicBulletType {
     tmpTargetVel.set(tmpDirection).scl(moveSpeed);
     enemyEntity.moveAt(tmpTargetVel, enemyEntity.type.accel);
   }
+
+  @Override
+  public void despawned(Bullet b) {
+    super.despawned(b);
+
+  }
 }

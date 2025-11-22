@@ -4,6 +4,7 @@ import arc.Core;
 import arc.Events;
 import arc.struct.ObjectMap;
 import arc.util.Log;
+import crystal.CVars;
 import crystal.Crystal;
 import crystal.game.UnitInfo;
 import crystal.util.Time;
@@ -46,7 +47,8 @@ public class UnitInfoSystem {
     if (Crystal.timer % 300 == 1) {
       saveUnitInfo();
       // UnitInfo.saveArray();
-      Time.logTime();
+      if (CVars.debug)
+        Time.logTime();
     }
   }
 
@@ -67,7 +69,8 @@ public class UnitInfoSystem {
 
   private static void onSectorSaveDeleted(Sector sector) {
     UnitInfo.get(sector).clear();
-    Log.info("区块 " + sector.name() + " 的save已被删除并置空");
+    if (CVars.debug)
+      Log.info("区块 " + sector.name() + " 的save已被删除并置空");
   }
 
   public static boolean check(Sector sector) {
@@ -109,12 +112,15 @@ public class UnitInfoSystem {
       for (var sector : planet.sectors) {
         if (sector.hasBase()) {
           if (UnitInfo.get(sector) == null) {
-            Log.err("发现区块" + sector + "没有UnitInfo");
+            if (CVars.debug)
+              Log.err("发现区块" + sector + "没有UnitInfo");
             try {
               addNewUnitInfo(sector);
-              Log.info("成功创建");
-              Log.info("已为区块" + sector + "新建UnitInfo");
-              Log.info(UnitInfo.get(sector));
+              if (CVars.debug) {
+                Log.info("成功创建");
+                Log.info("已为区块" + sector + "新建UnitInfo");
+                Log.info(UnitInfo.get(sector));
+              }
             } catch (Exception e) {
               Log.err(e);
               Log.info("区块" + sector + "新建UnitInfo失败");

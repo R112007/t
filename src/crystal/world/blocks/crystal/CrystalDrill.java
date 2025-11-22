@@ -2,6 +2,7 @@ package crystal.world.blocks.crystal;
 
 import arc.util.io.Reads;
 import arc.util.io.Writes;
+import crystal.world.interfaces.ConsumeCrystalInterface;
 import mindustry.world.blocks.production.Drill;
 
 public class CrystalDrill extends Drill {
@@ -10,6 +11,11 @@ public class CrystalDrill extends Drill {
 
   public CrystalDrill(String name) {
     super(name);
+  }
+
+  @Override
+  public void init() {
+    super.init();
     crycons.setCrystal(this.consumeCrystal, this.crystalCapacity);
   }
 
@@ -25,7 +31,12 @@ public class CrystalDrill extends Drill {
     crycons.addStats(stats);
   }
 
-  public class CrystalDrillBuild extends DrillBuild {
+  public class CrystalDrillBuild extends DrillBuild implements ConsumeCrystalInterface {
+    @Override
+    public CrystalConsumer getConsumer() {
+      return crycons;
+    }
+
     @Override
     public void updateTile() {
       super.updateTile();

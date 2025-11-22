@@ -1,11 +1,18 @@
 package crystal;
 
+import arc.Events;
 import arc.graphics.Color;
-import crystal.entities.abilities.AddWeaponAbility;
+import crystal.content.CItems;
+import crystal.entities.abilities.ReduceBoostAbility;
 import crystal.entities.bullet.GravityBullet;
+import crystal.entities.bullet.ReduceBoostBullet;
 import crystal.world.blocks.crystal.CrystalDrill;
 import crystal.world.blocks.crystal.CrystalSource;
+//import crystal.world.blocks.defence.AbsorbForceProjector;
+import crystal.world.blocks.defence.LaserResistantForceProjector;
+import crystal.world.blocks.defence.LaserShield;
 import crystal.world.blocks.defence.LinkWall;
+import crystal.world.blocks.defence.turrets.LevelUpTurret;
 import crystal.world.blocks.environment.DamageFloor;
 import crystal.world.blocks.liquid.LiquidRangeBridge;
 import crystal.world.blocks.payloads.A;
@@ -14,12 +21,17 @@ import crystal.world.blocks.payloads.UnitReceivePad;
 import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.UnitTypes;
+import mindustry.entities.bullet.ContinuousBulletType;
+import mindustry.game.EventType;
+import mindustry.game.EventType.BuildDamageEvent;
+import mindustry.game.EventType.Trigger;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.UnitType;
 import mindustry.world.Block;
+import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
 import mindustry.world.meta.BuildVisibility;
 
@@ -37,6 +49,10 @@ public class Test {
   public static Block f1;
   public static Block tu1;
   public static UnitType a6;
+  public static Block test8;
+  public static Block test10;
+  public static Block test9;
+  public static Block w;
 
   public static void load() {
     t = new LiquidRangeBridge("t") {
@@ -103,7 +119,9 @@ public class Test {
         hitSize = 8f;
         health = 150;
         constructor = UnitEntity::create;
-        this.abilities.add(new AddWeaponAbility(UnitTypes.dagger.weapons.get(0), 300, 80, 500, false));
+        this.abilities.add(new ReduceBoostAbility(80, 0.1f));
+        // this.abilities.add(new AddWeaponAbility(UnitTypes.dagger.weapons.get(0), 300,
+        // 80, 500, false));
       }
     };
     t1 = new LinkWall("t1") {
@@ -120,7 +138,7 @@ public class Test {
         this.alwaysUnlocked = true;
       }
     };
-    c1 = new CrystalSource("c1") {
+    c1 = new LevelUpTurret("c1") {
       {
         size = 1;
         this.requirements(Category.production, ItemStack.with(new Object[] { Items.copper, 1 }));
@@ -136,11 +154,11 @@ public class Test {
         this.alwaysUnlocked = true;
       }
     };
-    f1 = new DamageFloor("f1") {
+    f1 = new CrystalSource("f1") {
       {
-        id = 0;
-        albedo = 0.9f;
-        damage = 0.2f;
+        size = 2;
+        this.requirements(Category.production, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
       }
     };
     tu1 = new PowerTurret("tu1") {
@@ -164,15 +182,56 @@ public class Test {
         coolant = consumeCoolant(0.2f);
 
         consumePower(6f);
-        shootType = new GravityBullet(3, 5) {
+        shootType = new ReduceBoostBullet(3f, 1f) {
           {
-            pierce = true;
-            foeceRange = 300;
-            foece = 5;
-            lifetime = 600;
+            this.range = 80f;
+            this.percent = 0.1f;
+            this.duration = 120;
           }
         };
       }
     };
+    test8 = new LaserResistantForceProjector("test8") {
+      {
+        this.size = 2;
+        this.itemCapacity = 10;
+        this.health = 720;
+        this.requirements(Category.effect,
+            ItemStack.with(new Object[] { CItems.yellowcopper, 1 }));
+        this.radius = 65f;
+        this.shieldHealth = 600f;
+        this.phaseShieldBoost = 700f;
+        this.phaseRadiusBoost = 40f;
+        this.phaseUseTime = 250f;
+        this.cooldownNormal = 1.6f;
+        this.cooldownLiquid = 2.6f;
+        this.cooldownBrokenBase = 1f;
+        this.consumesPower = true;
+        this.consumePower(6.5f);
+      }
+    };
+    test10 = new LaserShield("test10");
+    /*
+     * test9 = new LaserResistantForceProjector("test9") {
+     * {
+     * this.size = 2;
+     * this.itemCapacity = 10;
+     * this.health = 720;
+     * this.requirements(Category.effect,
+     * ItemStack.with(new Object[] { CItems.yellowcopper, 1 }));
+     * this.radius = 95f;
+     * this.shieldHealth = 6000f;
+     * this.phaseShieldBoost = 700f;
+     * this.phaseRadiusBoost = 40f;
+     * this.phaseUseTime = 250f;
+     * this.cooldownNormal = 1.6f;
+     * this.cooldownLiquid = 2.6f;
+     * this.cooldownBrokenBase = 1f;
+     * this.consumesPower = true;
+     * this.consumePower(6.5f);
+     * }
+     * };
+     */
+
   }
 }

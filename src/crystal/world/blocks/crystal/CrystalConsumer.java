@@ -30,12 +30,16 @@ public class CrystalConsumer implements CrystalInterface {
   public void update(Building entity) {
     Log.info(tick + "tick");
     Log.info(efficiency + "efficiency");
+    if (crystalSaver < 0f)
+      crystalSaver = 0f;
     if (crystalSaver > crystalCapacity)
       crystalSaver = crystalCapacity;
+    if (tick <= 0 && crystalSaver <= 0)
+      efficiency = 0;
     if (tick > consumeCrystal && crystalSaver < crystalCapacity && canConsume(entity)) {
       crystalSaver += (tick - consumeCrystal);
       Log.info("level1");
-    } else if (crystalSaver < crystalCapacity && !canConsume(entity)) {
+    } else if (tick > consumeCrystal && crystalSaver < crystalCapacity && !canConsume(entity)) {
       crystalSaver += tick;
       Log.info("level2");
     }
@@ -46,8 +50,6 @@ public class CrystalConsumer implements CrystalInterface {
         efficiency = 1f;
       } else if (tick < consumeCrystal && crystalSaver <= 0f) {
         Log.info("level4");
-        if (crystalSaver < 0f)
-          crystalSaver = 0f;
         efficiency = tick / consumeCrystal;
       } else if (tick > consumeCrystal) {
         Log.info("level5");
