@@ -3,10 +3,12 @@ package crystal;
 import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
+import arc.math.Mathf;
 import arc.math.geom.Intersector;
 import arc.math.geom.Vec2;
 import arc.struct.Seq;
 import arc.util.Log;
+import arc.util.Time;
 import crystal.content.CBlocks;
 import crystal.content.CIcons;
 import crystal.content.CItems;
@@ -14,12 +16,17 @@ import crystal.content.CPlanets;
 import crystal.content.CTechTree;
 import crystal.content.CUnits;
 import crystal.core.UnitInfoSystem;
+import crystal.entities.units.SummonUnit;
 import crystal.game.UnitInfo;
+import crystal.game.CEventType.MapChangeEvent;
+import crystal.game.CEventType.SectorChangeEvent;
+import crystal.ui.CStyles;
 import crystal.ui.TimeControl;
 import crystal.world.blocks.environment.DamageFloor;
 import mindustry.Vars;
 import mindustry.game.EventType.ClientLoadEvent;
 import mindustry.game.EventType.Trigger;
+import mindustry.maps.Map;
 import mindustry.mod.Mod;
 import mindustry.type.Sector;
 import mindustry.ui.dialogs.BaseDialog;
@@ -28,6 +35,8 @@ public class Crystal extends Mod {
   public static BaseDialog welcomeDialog;
   public static final String scqq = "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Rrju8RLWbsJstJ3rcJxWyrtop4u7uRb9&authKey=gdngZkPeYxZPhYTmjQUTjPos%2FJKckD02YSFnYLmdVojPZIzZw1T%2FbtubSoyuw2LA&noverify=0&group_code=756820891";
   public static int timer = 0;
+  public static Sector hereSector = null;
+  public static Map hereMap = null;
   Seq<Sector> sectors = new Seq<>();
 
   public Crystal() {
@@ -40,6 +49,7 @@ public class Crystal extends Mod {
   @Override
   public void loadContent() {
     Log.info("Start to Load Contents");
+    CStyles.load();
     CItems.load();
     CUnits.load();
     CBlocks.load();
@@ -52,18 +62,6 @@ public class Crystal extends Mod {
   }
 
   public void constructor() {
-    /*
-     * UnitInfo.loadArray();
-     * try {
-     * for (var u : UnitInfo.all) {
-     * if (u != null)
-     * Log.info("id+" + u.id + "  sector " + u.getBoundSector());
-     * }
-     * } catch (Exception e) {
-     * Log.err("loadarray出错", e);
-     * }
-     */
-    // UnitInfoFileStorage.loadAll();
     if (CVars.debug)
       loadlog();
     UnitInfoSystem.loadUnitInfo();
@@ -79,6 +77,11 @@ public class Crystal extends Mod {
   }
 
   public void loadlog() {
+    // log1();
+    log2();
+  }
+
+  public void log1() {
     for (var preset : UnitInfo.all) {
       if (preset != null)
         sectors.add(preset.getBoundSector());
@@ -87,6 +90,18 @@ public class Crystal extends Mod {
     for (var u : sectors) {
       Log.info("id+" + u.id + "  sector " + u + " " + u.name());
     }
+  }
+
+  public void log2() {
+    Log.info("lg2" + Mathf.log(10, 2));
+    Log.info("lg3" + Mathf.log(10, 3));
+    Log.info("lg5" + Mathf.log(10, 5));
+    Log.info("ln2" + Mathf.log(Mathf.E, 2));
+    Log.info("ln3" + Mathf.log(Mathf.E, 3));
+    Log.info("ln5" + Mathf.log(Mathf.E, 5));
+    Log.info("e2" + Mathf.pow(Mathf.E, 2));
+    Log.info("e3" + Mathf.pow(Mathf.E, 3));
+    Log.info("e4" + Mathf.pow(Mathf.E, 4));
   }
 
   @Override
@@ -98,12 +113,31 @@ public class Crystal extends Mod {
       update();
     });
     UnitInfoSystem.init();
+    SummonUnit.init();
   }
 
   public void update() {
-    timer++;
+    timer += Time.delta;
     UnitInfoSystem.update();
     DamageFloor.update();
+    updateSector();
+    updateMap();
+    if (timer % 120 == 0)
+      log2();
+  }
+
+  public void updateSector() {
+    if (Vars.state.getSector() != null && Vars.state.getSector() != hereSector) {
+      Events.fire(new SectorChangeEvent(Vars.state.getSector()));
+      hereSector = Vars.state.getSector();
+    }
+  }
+
+  public void updateMap() {
+    if (Vars.state.map != null && Vars.state.map != hereMap) {
+      Events.fire(new MapChangeEvent(Vars.state.map));
+      hereMap = Vars.state.map;
+    }
   }
 
   public void replaceUI() {

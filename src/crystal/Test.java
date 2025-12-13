@@ -3,6 +3,8 @@ package crystal;
 import arc.Events;
 import arc.graphics.Color;
 import crystal.content.CItems;
+import crystal.content.CTechTree;
+import crystal.content.Tree;
 import crystal.entities.abilities.ReduceBoostAbility;
 import crystal.entities.bullet.GravityBullet;
 import crystal.entities.bullet.ReduceBoostBullet;
@@ -13,13 +15,18 @@ import crystal.world.blocks.defence.LaserResistantForceProjector;
 import crystal.world.blocks.defence.LaserShield;
 import crystal.world.blocks.defence.LinkWall;
 import crystal.world.blocks.defence.turrets.LevelUpTurret;
+import crystal.world.blocks.effect.GuideCandle;
+import crystal.world.blocks.effect.SummonUnitBlock;
 import crystal.world.blocks.environment.DamageFloor;
+import crystal.world.blocks.environment.SpawnBossFloor;
 import crystal.world.blocks.liquid.LiquidRangeBridge;
 import crystal.world.blocks.payloads.A;
 import crystal.world.blocks.payloads.UnitLanuchPad;
 import crystal.world.blocks.payloads.UnitReceivePad;
+import mindustry.content.Blocks;
 import mindustry.content.Fx;
 import mindustry.content.Items;
+import mindustry.content.TechTree;
 import mindustry.content.UnitTypes;
 import mindustry.entities.bullet.ContinuousBulletType;
 import mindustry.game.EventType;
@@ -53,8 +60,24 @@ public class Test {
   public static Block test10;
   public static Block test9;
   public static Block w;
+  public static Block spfloor;
+  public static Block guidecandle;
+  public static Block summonblock;
 
   public static void load() {
+    guidecandle = new GuideCandle("guidecandle");
+    summonblock = new SummonUnitBlock("summonblock") {
+      {
+        buildVisibility = BuildVisibility.shown;
+        category = Category.effect;
+        requirements = ItemStack.with(Items.copper, 2);
+      }
+    };
+    CTechTree.addNode(Blocks.coreShard, guidecandle);
+    spfloor = new SpawnBossFloor("spfloor") {
+      {
+      }
+    };
     t = new LiquidRangeBridge("t") {
       {
         range = 35;

@@ -19,6 +19,7 @@ public class CStat {
   public static final Stat healpercent;
   public static final Stat dependbuild;
   public static final Stat dependfloor;
+  public static final Stat maxBlock;
 
   static {
     armorMultiplier = new Stat("armorMultiplier");
@@ -36,6 +37,7 @@ public class CStat {
     healpercent = new Stat("healpercent", StatCat.function);
     dependbuild = new Stat("dependbuild", CStatCat.depend);
     dependfloor = new Stat("dependfloor", CStatCat.depend);
+    maxBlock = new Stat("maxBlock", StatCat.function);
   }
 
 }
