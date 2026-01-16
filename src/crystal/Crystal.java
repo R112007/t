@@ -16,16 +16,19 @@ import crystal.content.CPlanets;
 import crystal.content.CTechTree;
 import crystal.content.CUnits;
 import crystal.core.UnitInfoSystem;
+import crystal.entities.units.MultiStageUnit;
 import crystal.entities.units.SummonUnit;
 import crystal.game.UnitInfo;
 import crystal.game.CEventType.MapChangeEvent;
 import crystal.game.CEventType.SectorChangeEvent;
+import crystal.type.MultiStageUnitType;
 import crystal.ui.CStyles;
 import crystal.ui.TimeControl;
 import crystal.world.blocks.environment.DamageFloor;
 import mindustry.Vars;
 import mindustry.game.EventType.ClientLoadEvent;
 import mindustry.game.EventType.Trigger;
+import mindustry.gen.Groups;
 import mindustry.maps.Map;
 import mindustry.mod.Mod;
 import mindustry.type.Sector;
@@ -78,7 +81,7 @@ public class Crystal extends Mod {
 
   public void loadlog() {
     // log1();
-    log2();
+    // log2();
   }
 
   public void log1() {
@@ -122,8 +125,6 @@ public class Crystal extends Mod {
     DamageFloor.update();
     updateSector();
     updateMap();
-    if (timer % 120 == 0)
-      log2();
   }
 
   public void updateSector() {

@@ -9,13 +9,18 @@ import arc.scene.ui.Image;
 import arc.scene.ui.layout.Table;
 import arc.struct.ObjectMap;
 import arc.struct.Seq;
+import arc.util.Scaling;
 import arc.util.Strings;
+import crystal.type.weapons.StageWeapon;
+import crystal.util.DLog;
 import mindustry.Vars;
 import mindustry.content.StatusEffects;
 import mindustry.ctype.UnlockableContent;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Tex;
 import mindustry.type.UnitType;
+import mindustry.type.Weapon;
+import mindustry.ui.Styles;
 import mindustry.world.blocks.defense.turrets.Turret;
 import mindustry.world.meta.StatUnit;
 import mindustry.world.meta.StatValue;
@@ -204,5 +209,73 @@ public class CStatValues {
         }
       }
     };
+  }
+
+  public static StatValue stageWeapons(UnitType unit, Seq<Weapon> weapons) {
+    return table -> {
+      table.row();
+      Seq<Weapon> w1 = new Seq<>(), w2 = new Seq<>(), w3 = new Seq<>(), w4 = new Seq<>();
+      for (int i = 0; i < weapons.size; i++) {
+        if (weapons.get(i) instanceof StageWeapon s1) {
+          if (s1.weappnStage == 1)
+            w1.add(s1);
+        }
+        if (weapons.get(i) instanceof StageWeapon s2) {
+          if (s2.weappnStage == 2)
+            w2.add(s2);
+        }
+        if (weapons.get(i) instanceof StageWeapon s3) {
+          if (s3.weappnStage == 3)
+            w3.add(s3);
+        }
+        if (weapons.get(i) instanceof StageWeapon s4) {
+          if (s4.weappnStage == 4)
+            w4.add(s4);
+        }
+      }
+      DLog.info("w1.size" + w1.size);
+      DLog.info("w2.size" + w2.size);
+      DLog.info("w3.size" + w3.size);
+      DLog.info("w4.size" + w4.size);
+      table.add(Core.bundle.get("stage.weapon") + 1);
+      table.row();
+      showWeapon(unit, w1, table);
+      DLog.info("w1run");
+      table.add(Core.bundle.get("stage.weapon") + 2);
+      table.row();
+      showWeapon(unit, w2, table);
+      DLog.info("w2run");
+      table.add(Core.bundle.get("stage.weapon") + 3);
+      table.row();
+      showWeapon(unit, w3, table);
+      DLog.info("w3run");
+      table.add(Core.bundle.get("stage.weapon") + 4);
+      table.row();
+      showWeapon(unit, w4, table);
+      DLog.info("w4run");
+    };
+  }
+
+  public static void showWeapon(UnitType unit, Seq<Weapon> weapons, Table table) {
+    for (int i = 0; i < weapons.size; i++) {
+      Weapon weapon = weapons.get(i);
+
+      if (weapon.flipSprite || !weapon.hasStats(unit)) {
+        // flipped weapons are not given stats
+        continue;
+      }
+
+      TextureRegion region = !weapon.name.isEmpty() ? Core.atlas.find(weapon.name + "-preview", weapon.region) : null;
+
+      table.table(Styles.grayPanel, w -> {
+        w.left().top().defaults().padRight(3).left();
+        if (region != null && region.found() && weapon.showStatSprite)
+          w.image(region).size(60).scaling(Scaling.bounded).left().top();
+        w.row();
+
+        weapon.addStats(unit, w);
+      }).growX().pad(5).margin(10);
+      table.row();
+    }
   }
 }

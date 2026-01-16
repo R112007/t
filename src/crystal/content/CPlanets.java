@@ -63,7 +63,6 @@ public class CPlanets {
         allowWaves = true;
         orbitRadius = 50;
         allowLegacyLaunchPads = true;
-        allowWaveSimulation = true;
         allowSectorInvasion = true;
         allowLaunchSchematics = true;
         enemyCoreSpawnReplace = true;

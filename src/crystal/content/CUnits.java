@@ -2,12 +2,18 @@ package crystal.content;
 
 import arc.graphics.Color;
 import crystal.entities.abilities.ContinueRepairField;
+import crystal.entities.units.MultiStageUnit;
 import mindustry.content.UnitTypes;
+import mindustry.gen.EntityMapping;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
 import mindustry.type.ammo.PowerAmmoType;
 
 public class CUnits {
+  static {
+    EntityMapping.idMap[51] = MultiStageUnit::create;
+    EntityMapping.nameMap.put("crystal-multistageunit", EntityMapping.idMap[51]);
+  }
   public static UnitType
   // 核心机
   taichu;

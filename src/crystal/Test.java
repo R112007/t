@@ -2,17 +2,20 @@ package crystal;
 
 import arc.Events;
 import arc.graphics.Color;
+import arc.math.Angles;
 import crystal.content.CItems;
 import crystal.content.CTechTree;
 import crystal.content.Tree;
 import crystal.entities.abilities.ReduceBoostAbility;
 import crystal.entities.bullet.GravityBullet;
 import crystal.entities.bullet.ReduceBoostBullet;
+import crystal.entities.units.MultiStageUnit;
+import crystal.type.MultiStageUnitType;
+import crystal.type.weapons.StageWeapon;
+import crystal.util.DLog;
 import crystal.world.blocks.crystal.CrystalDrill;
 import crystal.world.blocks.crystal.CrystalSource;
 //import crystal.world.blocks.defence.AbsorbForceProjector;
-import crystal.world.blocks.defence.LaserResistantForceProjector;
-import crystal.world.blocks.defence.LaserShield;
 import crystal.world.blocks.defence.LinkWall;
 import crystal.world.blocks.defence.turrets.LevelUpTurret;
 import crystal.world.blocks.effect.GuideCandle;
@@ -28,15 +31,19 @@ import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.TechTree;
 import mindustry.content.UnitTypes;
+import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.bullet.ContinuousBulletType;
+import mindustry.entities.units.WeaponMount;
 import mindustry.game.EventType;
 import mindustry.game.EventType.BuildDamageEvent;
 import mindustry.game.EventType.Trigger;
 import mindustry.gen.Sounds;
+import mindustry.gen.Unit;
 import mindustry.gen.UnitEntity;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.UnitType;
+import mindustry.type.Weapon;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
@@ -63,8 +70,86 @@ public class Test {
   public static Block spfloor;
   public static Block guidecandle;
   public static Block summonblock;
+  public static MultiStageUnitType multiStageUnitType;
 
   public static void load() {
+    multiStageUnitType = new MultiStageUnitType("multiStageUnitType") {
+      {
+        this.health = 600;
+        this.weapons.add(
+            new StageWeapon("large-weapon", false) {
+              {
+                weappnStage = 1;
+                reload = 13f;
+                x = 2f;
+                y = 6f;
+                top = false;
+                ejectEffect = Fx.casing1;
+                bullet = new BasicBulletType(2.5f, 9) {
+                  {
+                    width = 7f;
+                    height = 9f;
+                    lifetime = 60f;
+                  }
+                };
+              }
+            });
+        this.weapons.add(
+            new StageWeapon("large-weapon", false) {
+              {
+                weappnStage = 2;
+                reload = 13f;
+                x = 4;
+                y = 6f;
+                top = false;
+                ejectEffect = Fx.casing1;
+                bullet = new BasicBulletType(2.5f, 9) {
+                  {
+                    width = 7f;
+                    height = 9f;
+                    lifetime = 60f;
+                  }
+                };
+              }
+            });
+        this.weapons.add(
+            new StageWeapon("large-weapon", false) {
+              {
+                weappnStage = 3;
+                reload = 13f;
+                x = 6f;
+                y = 6f;
+                top = false;
+                ejectEffect = Fx.casing1;
+                bullet = new BasicBulletType(2.5f, 9) {
+                  {
+                    width = 7f;
+                    height = 9f;
+                    lifetime = 60f;
+                  }
+                };
+              }
+            });
+        this.weapons.add(
+            new StageWeapon("large-weapon", false) {
+              {
+                weappnStage = 4;
+                reload = 13f;
+                x = 10f;
+                y = 6f;
+                top = false;
+                ejectEffect = Fx.casing1;
+                bullet = new BasicBulletType(2.5f, 9) {
+                  {
+                    width = 7f;
+                    height = 9f;
+                    lifetime = 60f;
+                  }
+                };
+              }
+            });
+      }
+    };
     guidecandle = new GuideCandle("guidecandle");
     summonblock = new SummonUnitBlock("summonblock") {
       {
@@ -201,7 +286,6 @@ public class Test {
         scaledHealth = 280;
         moveWhileCharging = false;
         accurateDelay = false;
-        shootSound = Sounds.laser;
         coolant = consumeCoolant(0.2f);
 
         consumePower(6f);
@@ -214,47 +298,5 @@ public class Test {
         };
       }
     };
-    test8 = new LaserResistantForceProjector("test8") {
-      {
-        this.size = 2;
-        this.itemCapacity = 10;
-        this.health = 720;
-        this.requirements(Category.effect,
-            ItemStack.with(new Object[] { CItems.yellowcopper, 1 }));
-        this.radius = 65f;
-        this.shieldHealth = 600f;
-        this.phaseShieldBoost = 700f;
-        this.phaseRadiusBoost = 40f;
-        this.phaseUseTime = 250f;
-        this.cooldownNormal = 1.6f;
-        this.cooldownLiquid = 2.6f;
-        this.cooldownBrokenBase = 1f;
-        this.consumesPower = true;
-        this.consumePower(6.5f);
-      }
-    };
-    test10 = new LaserShield("test10");
-    /*
-     * test9 = new LaserResistantForceProjector("test9") {
-     * {
-     * this.size = 2;
-     * this.itemCapacity = 10;
-     * this.health = 720;
-     * this.requirements(Category.effect,
-     * ItemStack.with(new Object[] { CItems.yellowcopper, 1 }));
-     * this.radius = 95f;
-     * this.shieldHealth = 6000f;
-     * this.phaseShieldBoost = 700f;
-     * this.phaseRadiusBoost = 40f;
-     * this.phaseUseTime = 250f;
-     * this.cooldownNormal = 1.6f;
-     * this.cooldownLiquid = 2.6f;
-     * this.cooldownBrokenBase = 1f;
-     * this.consumesPower = true;
-     * this.consumePower(6.5f);
-     * }
-     * };
-     */
-
   }
 }

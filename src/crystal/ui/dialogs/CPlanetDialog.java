@@ -1132,12 +1132,12 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
         state.uiAlpha = Mathf.lerpDelta(state.uiAlpha, Mathf.num(state.zoom < 1.9f), 0.1f);
     }
 
-    void displayItems(Table c, float scl, ObjectMap<Item, ExportStat> stats, String name) {
-        displayItems(c, scl, stats, name, t -> {
+    void displayItems(Table c, ObjectMap<Item, ExportStat> stats, String name) {
+        displayItems(c, stats, name, t -> {
         });
     }
 
-    void displayItems(Table c, float scl, ObjectMap<Item, ExportStat> stats, String name, Cons<Table> builder) {
+    void displayItems(Table c, ObjectMap<Item, ExportStat> stats, String name, Cons<Table> builder) {
         Table t = new Table().left();
 
         int i = 0;
@@ -1145,7 +1145,7 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
             var stat = stats.get(item);
             if (stat == null)
                 continue;
-            int total = (int) (stat.mean * 60 * scl);
+            int total = (int) (stat.mean * 60 );
             if (total > 1) {
                 t.image(item.uiIcon).padRight(3);
                 t.add(UI.formatAmount(total) + " " + Core.bundle.get("unit.perminute")).color(Color.lightGray)
@@ -1177,8 +1177,7 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
             c.add(Core.bundle.get("sectors.time") + " [accent]" + sector.save.getPlayTime()).left().row();
 
             if (sector.info.waves && sector.hasBase()) {
-                c.add(Core.bundle.get("sectors.wave") + " [accent]" + (sector.info.wave + sector.info.wavesPassed))
-                        .left().row();
+                c.add(Core.bundle.get("sectors.wave") + " [accent]" + sector.info.wave).left().row();
             }
 
             if (sector.isAttacked() || !sector.hasBase()) {
@@ -1197,10 +1196,10 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
             }
 
             // production
-            displayItems(c, sector.getProductionScale(), sector.info.production, "@sectors.production");
+            displayItems(c, sector.info.production, "@sectors.production");
 
             // export
-            displayItems(c, sector.getProductionScale(), sector.info.export, "@sectors.export", t -> {
+            displayItems(c, sector.info.export, "@sectors.export", t -> {
                 if (sector.info.destination != null && sector.info.destination.hasBase()) {
                     String ic = sector.info.destination.iconChar();
                     t.add(Iconc.rightOpen + " " + (ic == null || ic.isEmpty() ? "" : ic + " ")
@@ -1210,7 +1209,7 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
 
             // import
             if (sector.hasBase()) {
-                displayItems(c, 1f, sector.info.imports, "@sectors.import", t -> {
+                displayItems(c, sector.info.imports, "@sectors.import", t -> {
                     sector.info.eachImport(sector.planet, other -> {
                         String ic = other.iconChar();
                         t.add(Iconc.rightOpen + " " + (ic == null || ic.isEmpty() ? "" : ic + " ") + other.name())
@@ -1279,20 +1278,7 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
 
     void addSurvivedInfo(Sector sector, Table table, boolean wrap) {
         if (!wrap) {
-            table.add(sector.planet.allowWaveSimulation
-                    ? Core.bundle.format("sectors.underattack", (int) (sector.info.damage * 100))
-                    : "@sectors.underattack.nodamage").wrapLabel(wrap).row();
-        }
-
-        if (sector.planet.allowWaveSimulation && sector.info.wavesSurvived >= 0
-                && sector.info.wavesSurvived - sector.info.wavesPassed >= 0 && !sector.isBeingPlayed()) {
-            int toCapture = sector.info.attack || sector.info.winWave <= 1 ? -1
-                    : sector.info.winWave - (sector.info.wave + sector.info.wavesPassed);
-            boolean plus = (sector.info.wavesSurvived - sector.info.wavesPassed) >= SectorDamage.maxRetWave - 1;
-            table.add(Core.bundle.format("sectors.survives",
-                    Math.min(sector.info.wavesSurvived - sector.info.wavesPassed, toCapture <= 0 ? 200 : toCapture) +
-                            (plus ? "+" : "") + (toCapture < 0 ? "" : "/" + toCapture)))
-                    .wrapLabel(wrap).row();
+            table.add("@sector.underattack").wrapLabel(wrap).row();
         }
     }
 
@@ -1502,29 +1488,6 @@ public class CPlanetDialog extends BaseDialog implements PlanetInterfaceRenderer
         if (sector.preset != null && sector.preset.requireUnlock && sector.preset.locked()
                 && sector.preset.techNode != null && !sector.hasBase()) {
             return;
-        }
-
-        Planet planet = sector.planet;
-
-        // make sure there are no under-attack sectors (other than this one)
-        if (!planet.allowWaveSimulation && !debugSelect) {
-            // if there are two or more attacked sectors... something went wrong, don't show
-            // the dialog to prevent softlock
-            Sector attacked = planet.sectors.find(s -> s.isAttacked() && s != sector);
-            if (attacked != null && planet.sectors.count(s -> s.isAttacked()) < 2) {
-                BaseDialog dialog = new BaseDialog("@sector.noswitch.title");
-                dialog.cont.add(bundle.format("sector.noswitch", attacked.name(), attacked.planet.localizedName))
-                        .width(400f).labelAlign(Align.center).center().wrap();
-                dialog.addCloseButton();
-                dialog.buttons.button("@sector.view", Icon.eyeSmall, () -> {
-                    dialog.hide();
-                    lookAt(attacked);
-                    selectSector(attacked);
-                });
-                dialog.show();
-
-                return;
-            }
         }
 
         boolean shouldHide = true;

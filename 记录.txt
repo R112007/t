@@ -5,4 +5,42 @@
       } else if (!isActive && activeShields.contains(this)) {
         activeShields.remove(this);
       }
-  public static final Seq<AbsorbForceProjectorBuild> activeShields = new Seq<>();
+public static final Seq<AbsorbForceProjectorBuild> activeShields = new Seq<>();
+
+ 
+
+
+
+                DLog.info(
+                    "武器1：" + mount + " - shoot:" + mount.shoot + ",unit.canShoot():" + unit.canShoot() + ", reload:"
+                        + mount.reload + ",!(bullet.killShooter && mount.totalShots > 0): "
+                        + !(bullet.killShooter && mount.totalShots > 0)
+                        + ",(!useAmmo || unit.ammo > 0 || !state.rules.unitAmmo || unit.team.rules().infiniteAmmo): "
+                        + (!useAmmo || unit.ammo > 0 || !state.rules.unitAmmo || unit.team.rules().infiniteAmmo)
+                        + ",(!alternate || wasFlipped == flipSprite): " + (!alternate || mount.side == flipSprite)
+                        + ",mount.warmup >= minWarmup: " + (mount.warmup >= minWarmup)
+                        + ",unit.deltaLen() / Time.delta >= minShootVelocity: "
+                        + (unit.deltaLen() / Time.delta >= minShootVelocity)
+                        + ", 射击锥满足:"
+                        + Angles.within(rotate ? mount.rotation : unit.rotation + baseRotation, mount.targetRotation,
+                            shootCone)
+                        + "能否射击" + (mount.shoot && // must be shooting
+                            unit.canShoot() && // must be able to shoot
+                            !(bullet.killShooter && mount.totalShots > 0) && // if the bullet kills the shooter, you
+                                                                             // should only
+                                                                             // ever be able to shoot once
+                            (!useAmmo || unit.ammo > 0 || !state.rules.unitAmmo || unit.team.rules().infiniteAmmo) && // check
+                                                                                                                      // ammo
+                            (!alternate || mount.side == flipSprite) &&
+                            mount.warmup >= minWarmup && // must be warmed up
+                            unit.deltaLen() / Time.delta >= minShootVelocity && // check velocity requirements
+                            (mount.reload <= 0.0001f || (alwaysContinuous && mount.bullet == null)) && // reload has to
+                                                                                                       // be 0, or
+                                                                                                       // it has to be
+                                                                                                       // an
+                                                                                                       // always-continuous
+                                                                                                       // weapon
+                            (alwaysShooting || Angles.within(rotate ? mount.rotation : unit.rotation + baseRotation,
+                                mount.targetRotation, shootCone))));
+                DLog.info(
+                    "1的!alternate: " + !alternate + " ; wasFlipped: " + mount.side + " flipSprite: " + flipSprite);

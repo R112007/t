@@ -22,4 +22,13 @@ public class WorldStuff {
   public WorldStuff(String name) {
     this(name, "");
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof WorldStuff stuff))
+      return false;
+    return this.name == stuff.name && this.description == stuff.description;
+  }
 }
