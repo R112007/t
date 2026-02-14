@@ -4,7 +4,7 @@ import arc.Core;
 import arc.math.Mathf;
 import arc.struct.Seq;
 import arc.util.Strings;
-import crystal.entities.units.MultiStageUnit;
+import crystal.entities.units.MultiStageMechUnit;
 import crystal.entities.units.UnitEnum.Mode;
 import crystal.type.weapons.StageWeapon;
 import crystal.world.meta.CStatValues;
@@ -16,6 +16,7 @@ import mindustry.world.meta.Stat;
 import mindustry.world.meta.StatUnit;
 import mindustry.world.meta.StatValues;
 
+import static arc.Core.bundle;
 import static mindustry.Vars.*;
 
 public class MultiStageUnitType extends UnitType {
@@ -24,7 +25,7 @@ public class MultiStageUnitType extends UnitType {
 
   public MultiStageUnitType(String name) {
     super(name);
-    this.constructor = MultiStageUnit::create;
+    this.constructor = MultiStageMechUnit::create;
   }
 
   @Override
@@ -54,7 +55,16 @@ public class MultiStageUnitType extends UnitType {
     stats.add(Stat.targetsGround, targetGround);
 
     if (abilities.any()) {
-      stats.add(Stat.abilities, StatValues.abilities(abilities));
+      stats.add(Stat.abilities, CStatValues.abilities(abilities, bundle.get("stage.ability" + "1")));
+    }
+    if (abStage2.any()) {
+      stats.add(Stat.abilities, CStatValues.abilities(abStage2, bundle.get("stage.ability") + "2"));
+    }
+    if (abStage3.any()) {
+      stats.add(Stat.abilities, CStatValues.abilities(abStage3, bundle.get("stage.ability") + "3"));
+    }
+    if (abStage4.any()) {
+      stats.add(Stat.abilities, CStatValues.abilities(abStage4, bundle.get("stage.ability") + "4"));
     }
 
     stats.add(Stat.flying, flying);

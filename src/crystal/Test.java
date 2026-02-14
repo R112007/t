@@ -6,10 +6,12 @@ import arc.math.Angles;
 import crystal.content.CItems;
 import crystal.content.CTechTree;
 import crystal.content.Tree;
+import crystal.entities.abilities.LabelAbility;
 import crystal.entities.abilities.ReduceBoostAbility;
 import crystal.entities.bullet.GravityBullet;
 import crystal.entities.bullet.ReduceBoostBullet;
-import crystal.entities.units.MultiStageUnit;
+import crystal.entities.units.MultiStageMechUnit;
+import crystal.entities.units.UnitEnum.Mode;
 import crystal.type.MultiStageUnitType;
 import crystal.type.weapons.StageWeapon;
 import crystal.util.DLog;
@@ -17,8 +19,14 @@ import crystal.world.blocks.crystal.CrystalDrill;
 import crystal.world.blocks.crystal.CrystalSource;
 //import crystal.world.blocks.defence.AbsorbForceProjector;
 import crystal.world.blocks.defence.LinkWall;
+import crystal.world.blocks.defence.towers.ExtendRangeTower;
+import crystal.world.blocks.defence.towers.ItemAttackTower;
+import crystal.world.blocks.defence.towers.PowerAttackTower;
+import crystal.world.blocks.defence.towers.Tower;
 import crystal.world.blocks.defence.turrets.LevelUpTurret;
+import crystal.world.blocks.effect.CoverFloorMachine;
 import crystal.world.blocks.effect.GuideCandle;
+import crystal.world.blocks.effect.ReplaceFloor;
 import crystal.world.blocks.effect.SummonUnitBlock;
 import crystal.world.blocks.environment.DamageFloor;
 import crystal.world.blocks.environment.SpawnBossFloor;
@@ -47,6 +55,7 @@ import mindustry.type.Weapon;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.PowerTurret;
+import mindustry.world.blocks.environment.Floor;
 import mindustry.world.meta.BuildVisibility;
 
 public class Test {
@@ -70,12 +79,71 @@ public class Test {
   public static Block spfloor;
   public static Block guidecandle;
   public static Block summonblock;
+  public static Block tower;
+  public static Block powertower;
+  public static Block itemtower;
+  public static Block extendtower;
+  public static ReplaceFloor replaceFloor;
+  public static CoverFloorMachine coverFloorMachine;;
   public static MultiStageUnitType multiStageUnitType;
 
   public static void load() {
+    coverFloorMachine = new CoverFloorMachine("coverFloorMachine") {
+      {
+        size = 2;
+        size = 2;
+        this.requirements(Category.defense, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+        this.requirements(Category.defense, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    replaceFloor = new ReplaceFloor("replaceFloor") {
+      {
+        size = 2;
+        this.requirements(Category.defense, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+        floors.add(Blocks.grass, Blocks.stone, Blocks.hotrock, Blocks.oreCopper);
+      }
+    };
+    tower = new Tower("tower") {
+      {
+        size = 2;
+        this.requirements(Category.effect, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    powertower = new PowerAttackTower("powertower") {
+      {
+        size = 2;
+        this.requirements(Category.effect, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    extendtower = new ExtendRangeTower("extendtower") {
+      {
+        size = 2;
+        this.requirements(Category.effect, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+      }
+    };
+    itemtower = new ItemAttackTower("itemtower") {
+      {
+        size = 2;
+        this.requirements(Category.effect, ItemStack.with(new Object[] { Items.copper, 1 }));
+        this.alwaysUnlocked = true;
+        ammoItems.add(Items.copper);
+        coolant = consumeCoolant(0.1f);
+      }
+    };
+
     multiStageUnitType = new MultiStageUnitType("multiStageUnitType") {
       {
+        this.mode = Mode.easy;
         this.health = 600;
+        this.abStage2.add(new LabelAbility("stage2"));
+        this.abStage3.add(new LabelAbility("stage3"));
+        this.abStage4.add(new LabelAbility("stage4"));
         this.weapons.add(
             new StageWeapon("large-weapon", false) {
               {
@@ -139,11 +207,13 @@ public class Test {
                 y = 6f;
                 top = false;
                 ejectEffect = Fx.casing1;
-                bullet = new BasicBulletType(2.5f, 9) {
+                bullet = new GravityBullet(2.5f, 9) {
                   {
+                    foece = 2;
+                    foeceRange = 32;
                     width = 7f;
                     height = 9f;
-                    lifetime = 60f;
+                    lifetime = 120f;
                   }
                 };
               }

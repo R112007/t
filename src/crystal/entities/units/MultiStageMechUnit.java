@@ -19,7 +19,7 @@ import mindustry.type.Weapon;
 
 import static mindustry.Vars.*;
 
-public class MultiStageUnit extends MechUnit {
+public class MultiStageMechUnit extends MechUnit {
   public Seq<Weapon> template = new Seq<>();
   public Stage stage = Stage.stage1;
   public Mode mode;
@@ -50,54 +50,49 @@ public class MultiStageUnit extends MechUnit {
     }
   }
 
-  // TODO 用ai把这个改成switch
   public void updateab(Unit unit) {
-    if (mode == Mode.easy) {
-      if (stage1()) {
-        return;
-      } else if (stage2()) {
-        updateab2(unit);
-      } else if (stage3()) {
-        updateab3(unit);
-      } else {
-        updateab4(unit);
-      }
-    } else if (mode == Mode.normal) {
-      if (stage1()) {
-        return;
-      } else if (stage2()) {
-        updateab2(unit);
-      } else if (stage3()) {
-        updateab3(unit);
-      } else {
-        updateab3(unit);
-        updateab4(unit);
-      }
-    } else if (mode == Mode.hard) {
-      if (stage1()) {
-        return;
-      } else if (stage2()) {
-        updateab2(unit);
-      } else if (stage3()) {
-        updateab3(unit);
-      } else {
-        updateab2(unit);
-        updateab3(unit);
-        updateab4(unit);
-      }
-    } else {
-      if (stage1()) {
-        return;
-      } else if (stage2()) {
-        updateab2(unit);
-      } else if (stage3()) {
-        updateab2(unit);
-        updateab3(unit);
-      } else {
-        updateab2(unit);
-        updateab3(unit);
-        updateab4(unit);
-      }
+    if (stage1()) {
+      return;
+    }
+    if (stage2()) {
+      updateab2(unit);
+      return;
+    }
+    switch (mode) {
+      case easy:
+        if (stage3()) {
+          updateab3(unit);
+        } else {
+          updateab4(unit);
+        }
+        break;
+      case normal:
+        if (stage3()) {
+          updateab3(unit);
+        } else {
+          updateab3(unit);
+          updateab4(unit);
+        }
+        break;
+      case hard:
+        if (stage3()) {
+          updateab3(unit);
+        } else {
+          updateab2(unit);
+          updateab3(unit);
+          updateab4(unit);
+        }
+        break;
+      default:
+        if (stage3()) {
+          updateab2(unit);
+          updateab3(unit);
+        } else {
+          updateab2(unit);
+          updateab3(unit);
+          updateab4(unit);
+        }
+        break;
     }
   }
 
@@ -282,7 +277,7 @@ public class MultiStageUnit extends MechUnit {
     super.readSync(read);
   }
 
-  public static MultiStageUnit create() {
-    return new MultiStageUnit();
+  public static MultiStageMechUnit create() {
+    return new MultiStageMechUnit();
   }
 }

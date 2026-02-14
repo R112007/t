@@ -16,6 +16,7 @@ import crystal.util.DLog;
 import mindustry.Vars;
 import mindustry.content.StatusEffects;
 import mindustry.ctype.UnlockableContent;
+import mindustry.entities.abilities.Ability;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Tex;
 import mindustry.type.UnitType;
@@ -237,22 +238,30 @@ public class CStatValues {
       DLog.info("w2.size" + w2.size);
       DLog.info("w3.size" + w3.size);
       DLog.info("w4.size" + w4.size);
-      table.add(Core.bundle.get("stage.weapon") + 1);
-      table.row();
-      showWeapon(unit, w1, table);
-      DLog.info("w1run");
-      table.add(Core.bundle.get("stage.weapon") + 2);
-      table.row();
-      showWeapon(unit, w2, table);
-      DLog.info("w2run");
-      table.add(Core.bundle.get("stage.weapon") + 3);
-      table.row();
-      showWeapon(unit, w3, table);
-      DLog.info("w3run");
-      table.add(Core.bundle.get("stage.weapon") + 4);
-      table.row();
-      showWeapon(unit, w4, table);
-      DLog.info("w4run");
+      if (w1.any()) {
+        table.add(Core.bundle.get("stage.weapon") + 1);
+        table.row();
+        showWeapon(unit, w1, table);
+        DLog.info("w1run");
+      }
+      if (w2.any()) {
+        table.add(Core.bundle.get("stage.weapon") + 2);
+        table.row();
+        showWeapon(unit, w2, table);
+        DLog.info("w2run");
+      }
+      if (w3.any()) {
+        table.add(Core.bundle.get("stage.weapon") + 3);
+        table.row();
+        showWeapon(unit, w3, table);
+        DLog.info("w3run");
+      }
+      if (w4.any()) {
+        table.add(Core.bundle.get("stage.weapon") + 4);
+        table.row();
+        showWeapon(unit, w4, table);
+        DLog.info("w4run");
+      }
     };
   }
 
@@ -277,5 +286,25 @@ public class CStatValues {
       }).growX().pad(5).margin(10);
       table.row();
     }
+  }
+
+  public static StatValue abilities(Seq<Ability> abilities, String str) {
+    return table -> {
+      table.row();
+      table.table(t -> {
+        t.add(str);
+        int count = 0;
+        for (Ability ability : abilities) {
+          if (ability.display) {
+            ability.display(t);
+
+            if ((++count) == 2) {
+              count = 0;
+              t.row();
+            }
+          }
+        }
+      });
+    };
   }
 }

@@ -3,7 +3,10 @@ package crystal.type.weapons;
 import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
+import arc.math.Angles;
+import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
+import mindustry.entities.units.WeaponMount;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
@@ -13,7 +16,7 @@ import mindustry.type.Weapon;
  */
 public class StageWeapon extends Weapon {
   public TextureRegion topIcon = null;
-  public boolean active = false;
+  public boolean active = false, hasDrop = false;
   public static final String topTex = "-tex";
   public int weappnStage;
 
@@ -35,10 +38,17 @@ public class StageWeapon extends Weapon {
     topIcon = Core.atlas.find("crystal-" + name + topTex);
   }
 
-  public void drawTopTex(Unit unit) {
-    if (topIcon == null && active)
+  public void drawTopTex(Unit unit, WeaponMount mount) {
+    if (topIcon == null || active || !hasDrop)
       return;
-    Draw.rect(topIcon, x, y, unit.rotation);
+
+    float rotation = unit.rotation - 90,
+        realRecoil = Mathf.pow(mount.recoil, recoilPow) * recoil,
+        weaponRotation = rotation + (rotate ? mount.rotation : baseRotation),
+        wx = unit.x + Angles.trnsx(rotation, x, y) + Angles.trnsx(weaponRotation, 0, -realRecoil),
+        wy = unit.y + Angles.trnsy(rotation, x, y) + Angles.trnsy(weaponRotation, 0, -realRecoil);
+
+    Draw.rect(topIcon, wx, wy, weaponRotation);
   }
 
   public StageWeapon copy() {
@@ -52,5 +62,12 @@ public class StageWeapon extends Weapon {
   @Override
   public void addStats(UnitType u, Table t) {
     super.addStats(u, t);
+  }
+
+  @Override
+  public void draw(Unit unit, WeaponMount mount) {
+    // drawTopTex(unit, mount);
+
+    super.draw(unit, mount);
   }
 }

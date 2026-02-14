@@ -2,7 +2,9 @@ package crystal.content;
 
 import arc.graphics.Color;
 import crystal.entities.abilities.ContinueRepairField;
-import crystal.entities.units.MultiStageUnit;
+import crystal.entities.units.MultiStageMechUnit;
+import crystal.entities.units.ShieldBuilderUnit;
+import crystal.type.BuildShieldUnitType;
 import mindustry.content.UnitTypes;
 import mindustry.gen.EntityMapping;
 import mindustry.type.UnitType;
@@ -11,18 +13,20 @@ import mindustry.type.ammo.PowerAmmoType;
 
 public class CUnits {
   static {
-    EntityMapping.idMap[51] = MultiStageUnit::create;
-    EntityMapping.nameMap.put("crystal-multistageunit", EntityMapping.idMap[51]);
+    EntityMapping.idMap[51] = MultiStageMechUnit::create;
+    EntityMapping.nameMap.put("crystal-multistagemechunit", EntityMapping.idMap[51]);
+    EntityMapping.idMap[52] = ShieldBuilderUnit::create;
+    EntityMapping.nameMap.put("crystal-shieldbuilderunit", EntityMapping.idMap[52]);
   }
   public static UnitType
   // 核心机
   taichu;
 
   public static void load() {
-    taichu = new UnitType("taichu") {
+    taichu = new BuildShieldUnitType("taichu") {
       {
         this.health = 400.0f;
-        this.constructor = UnitTypes.alpha.constructor;
+        this.constructor = ShieldBuilderUnit::create;
         this.controller = UnitTypes.alpha.controller;
         this.flying = true;
         this.ammoType = new PowerAmmoType(800);
